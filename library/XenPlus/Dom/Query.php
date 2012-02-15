@@ -1,10 +1,29 @@
 <?php
 
+/**
+ * Query DOM structures based on CSS selectors and/or XPath
+ *
+ * @package XenPlus
+ */
 class XenPlus_Dom_Query extends Zend_Dom_Query
 {
+	/**
+	 * @var XenPlus_Dom_Document
+	 */
 	protected $_dom = null;
+
+	/**
+	 * We only want to load the DOM once so we only get one instance
+	 * of XenPlus_Dom_Document. Something ZF doesn't do which causes
+	 * restrictions.
+	 *
+	 * @var bool
+	 */
 	protected $_domLoaded = false;
 
+	/**
+	 * @return XenPlus_Dom_Document
+	 */
 	public function getDom()
 	{
 		if ($this->_dom === null)
@@ -13,6 +32,9 @@ class XenPlus_Dom_Query extends Zend_Dom_Query
 		return $this->_dom;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getEncoding()
 	{
 		if ($this->_encoding === null)
@@ -21,6 +43,15 @@ class XenPlus_Dom_Query extends Zend_Dom_Query
 		return $this->_encoding;
 	}
 
+	/**
+	 * Perform an XPath query
+	 *
+	 * @param string|array $xpathQuery
+	 * @param string $query CSS selector query
+	 *
+	 * @return Zend_Dom_Query_Result
+	 * @throws Zend_Dom_Exception
+	 */
 	public function queryXpath($xpathQuery, $query = null)
 		{
 			if (null === ($document = $this->getDocument())) {
