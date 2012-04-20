@@ -1,31 +1,19 @@
 <?php
 
-abstract class XenPlus_Listener_CriteriaUser extends XenPlus_Listener_Abstract
+/**
+ * @package XenPlus_Listener
+ */
+interface XenPlus_Listener_CriteriaUser
 {
-	protected $_rule;
-	protected $_data = array();
-	protected $_user = array();
-
-	public function execute($rule, $data, $user, &$returnValue)
-	{
-		$this->_rule = $rule;
-		$this->_data = $data;
-		$this->_user = $user;
-
-		$method = '_rule' . XenPlus_Helper_Listener::convertToCamelCase($rule, true);
-		$methodExists = method_exists($this, $method);
-
-		if ($this->_preRule($methodExists) === false)
-			return;
-
-		if ($methodExists)
-			$returnValue = $this->$method();
-
-		$this->_postRule();
-	}
-
-	protected function _preRule(&$ruleExists){ return true; }
-
-	protected function _postRule(){}
-
+	/**
+	 * Called while testing a user against user criteria in XenForo_Helper_Criteria::userMatchesCriteria() for trophies, notices etc.
+	 * 
+	 * @param  string $rule         - text identifying the criteria that should be checked.
+	 * @param  array  $data         - data defining the conditions of the criteria.
+	 * @param  array  $user         - the user against which to check the criteria.
+	 * @param  bool   &$returnValue - the event code should set this to true if a criteria check matches.
+	 * 
+	 * @return bool - return false to stop running other listeners 
+	 */
+	public function run($rule, array $data, array $user, &$returnValue);
 }

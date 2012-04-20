@@ -1,28 +1,17 @@
 <?php
 
-abstract class XenPlus_Listener_TemplateCreate extends XenPlus_Listener_Abstract
+interface XenPlus_Listener_TemplateCreate
 {
-    protected $_template;
-
-    public function execute(&$templateName, array &$params, XenForo_Template_Abstract $template)
-    {
-        $this->_template = $template;
-
-        $method = '_' . XenPlus_Helper_Listener::convertToCamelCase($templateName);
-        if (method_exists($this, $method))
-            $this->$method($templateName, $params);
-
-		if (method_exists($this, '_preLoadTemplates'))
-		{
-			$templates = $this->_preLoadTemplates();
-			if (isset($templates[$templateName]))
-			{
-				if (!is_array($templates[$templateName]))
-					$templates[$templateName] = array($templates[$templateName]);
-
-				foreach ($templates[$templateName] as $temp)
-					$template->preloadTemplate($temp);
-			}
-		}
-    }
+	/**
+	 * Called whenever the template object constructor is called. You may use this event to modify 
+	 * the name of the template being called, to modify the params being passed to the template, 
+	 * or to pre-load additional templates as needed.
+	 * 
+	 * @param  string                    &$templateName - the name of the template to be rendered.
+	 * @param  array                     &$params       - key-value pairs of parameters that are available to the template.
+	 * @param  XenForo_Template_Abstract $template      - the template object itself.
+	 * 
+	 * @return bool - return false to stop running other listeners
+	 */
+    public function run(&$templateName, array &$params, XenForo_Template_Abstract $template);
 }
